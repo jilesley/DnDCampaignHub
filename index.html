@@ -1,3 +1,67 @@
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>DnD Campaign Hub</title>
+</head>
 <body>
-  <h1>Hello World!</h1>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script>
+    // Get Folder Files
+    function listFolderContents(folderId) {
+      gapi.client.setApiKey("AIzaSyDOfiBfhLMNVEW97kB4_dDsIU6J0N3Z5BU");
+      return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
+          .then(
+            function() {
+              console.log("GAPI client loaded for API");
+
+              return gapi.client.drive.files.list({
+                "orderBy": "name_natural",
+                "q": "'" + folderId + "' in parents"
+              })
+                  .then(function(response) {
+                          // Handle the results here (response.result has the parsed body).
+                          console.log("Response", response);
+
+                          var files = response.result.files;
+
+                          var fileListDivHTML = "";
+
+                          for (var iFile = 0; iFile < files.length; iFile++) {
+                            var file = files[iFile];
+                            console.log(file.name, file);
+
+                            fileListDivHTML += "<p><a " +
+                              // open preview of document
+                              "href='https://drive.google.com/file/d/" + file.id + "' " +
+                              "target='_blank'>" + file.name +"</a></p>";
+                          }
+
+                          document.getElementById("fileList").innerHTML = fileListDivHTML;
+
+                        },
+                        function(err) { console.error("Execute error", err); });
+
+            },
+            function(err) { console.error("Error loading GAPI client for API", err); });
+    }
+
+    gapi.load("client");
+
+
+  </script>
+
+
+  <h1>Select Campaign</h1>
+
+
+  <button onclick="listFolderContents('1KSZ3Sio1VnVDA1KGbsm4tJjBMmJ30a6p')">Alrea's Compassion</button>
+
+  <button onclick="listFolderContents('1AsL16A6SFkMm5RkR3IxolfVMSB70HLDb')">Red Hand of Doom</button>
+
+
+  <div id="fileList">
+
+  </div>
+
+
 </body>
